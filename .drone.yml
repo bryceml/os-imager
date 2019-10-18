@@ -13,7 +13,7 @@ steps:
   - apk --no-cache add --update python3
   - pip3 install --upgrade pip
   - pip3 install invoke
-  - inv build-aws --validate --distro=arch --distro-version=2019-01-09
+  - inv build-aws --validate --distro=arch --distro-version=lts
   depends_on:
   - clone
 
@@ -197,7 +197,7 @@ steps:
   - apk --no-cache add make curl grep gawk sed python3
   - pip3 install --upgrade pip
   - pip3 install invoke
-  - inv build-aws --distro=arch --distro-version=2019-01-09
+  - inv build-aws --distro=arch --distro-version=lts
   environment:
     AWS_ACCESS_KEY_ID:
       from_secret: username
@@ -1234,7 +1234,7 @@ steps:
   - apk --no-cache add make curl grep gawk sed python3
   - pip3 install --upgrade pip
   - pip3 install invoke
-  - inv build-aws --staging --distro=arch --distro-version=2019-01-09
+  - inv build-aws --staging --distro=arch --distro-version=lts
   environment:
     AWS_ACCESS_KEY_ID:
       from_secret: username
@@ -2253,6 +2253,6 @@ depends_on:
 
 ---
 kind: signature
-hmac: 6c396aa9bd6b33bff80c9761048d7840c8c2ecce0292eb7b52310eecdc58b424
+hmac: e1b716d4bde87391ed5fe12f36c1f719cd90ff458792ab0f73dbc768a134f877
 
 ...
