@@ -97,16 +97,6 @@ steps:
   depends_on:
   - clone
 
-- name: Fedora 29
-  image: hashicorp/packer
-  commands:
-  - apk --no-cache add --update python3
-  - pip3 install --upgrade pip
-  - pip3 install invoke
-  - inv build-aws --validate --distro=fedora --distro-version=29
-  depends_on:
-  - clone
-
 - name: Fedora 30
   image: hashicorp/packer
   commands:
@@ -114,6 +104,16 @@ steps:
   - pip3 install --upgrade pip
   - pip3 install invoke
   - inv build-aws --validate --distro=fedora --distro-version=30
+  depends_on:
+  - clone
+
+- name: Fedora 31
+  image: hashicorp/packer
+  commands:
+  - apk --no-cache add --update python3
+  - pip3 install --upgrade pip
+  - pip3 install invoke
+  - inv build-aws --validate --distro=fedora --distro-version=31
   depends_on:
   - clone
 
@@ -718,7 +718,7 @@ depends_on:
 
 ---
 kind: pipeline
-name: Fedora 29
+name: Fedora 30
 
 platform:
   os: linux
@@ -736,7 +736,7 @@ steps:
   - apk --no-cache add make curl grep gawk sed python3
   - pip3 install --upgrade pip
   - pip3 install invoke
-  - inv build-aws --distro=fedora --distro-version=29
+  - inv build-aws --distro=fedora --distro-version=30
   environment:
     AWS_ACCESS_KEY_ID:
       from_secret: username
@@ -779,7 +779,7 @@ depends_on:
 
 ---
 kind: pipeline
-name: Fedora 30
+name: Fedora 31
 
 platform:
   os: linux
@@ -797,7 +797,7 @@ steps:
   - apk --no-cache add make curl grep gawk sed python3
   - pip3 install --upgrade pip
   - pip3 install invoke
-  - inv build-aws --distro=fedora --distro-version=30
+  - inv build-aws --distro=fedora --distro-version=31
   environment:
     AWS_ACCESS_KEY_ID:
       from_secret: username
@@ -1694,7 +1694,7 @@ depends_on:
 
 ---
 kind: pipeline
-name: Fedora 29 (Staging)
+name: Fedora 30 (Staging)
 
 platform:
   os: linux
@@ -1712,7 +1712,7 @@ steps:
   - apk --no-cache add make curl grep gawk sed python3
   - pip3 install --upgrade pip
   - pip3 install invoke
-  - inv build-aws --staging --distro=fedora --distro-version=29
+  - inv build-aws --staging --distro=fedora --distro-version=30
   environment:
     AWS_ACCESS_KEY_ID:
       from_secret: username
@@ -1755,7 +1755,7 @@ depends_on:
 
 ---
 kind: pipeline
-name: Fedora 30 (Staging)
+name: Fedora 31 (Staging)
 
 platform:
   os: linux
@@ -1773,7 +1773,7 @@ steps:
   - apk --no-cache add make curl grep gawk sed python3
   - pip3 install --upgrade pip
   - pip3 install invoke
-  - inv build-aws --staging --distro=fedora --distro-version=30
+  - inv build-aws --staging --distro=fedora --distro-version=31
   environment:
     AWS_ACCESS_KEY_ID:
       from_secret: username
@@ -2121,6 +2121,6 @@ depends_on:
 
 ---
 kind: signature
-hmac: 695a815f4d3e1c11002de771daf6fa2cb9a04656da482c426bac85f5b20a8235
+hmac: ec475b887bec8c5cfc738e2563f32f99cf252e02d21fd2132eaa361eb35c2250
 
 ...
