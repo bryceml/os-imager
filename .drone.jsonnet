@@ -14,6 +14,7 @@ local distros = [
   { display_name: 'Opensuse 15', name: 'opensuse', version: '15', multiplier: 12 },
   { display_name: 'Ubuntu 1604', name: 'ubuntu', version: '1604', multiplier: 13 },
   { display_name: 'Ubuntu 1804', name: 'ubuntu', version: '1804', multiplier: 14 },
+  { display_name: 'Ubuntu 1910', name: 'ubuntu', version: '1910', multiplier: 15 },
   // Windows builds have a 0 multiplier because we want them to start first and they are few enough not to hit API limits
   //  { display_name: 'Windows 2008r2', name: 'windows', version: '2008r2', multiplier: 0 },
   //  { display_name: 'Windows 2012r2', name: 'windows', version: '2012r2', multiplier: 0 },

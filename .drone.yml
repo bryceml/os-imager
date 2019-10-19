@@ -147,6 +147,16 @@ steps:
   depends_on:
   - clone
 
+- name: Ubuntu 1910
+  image: hashicorp/packer
+  commands:
+  - apk --no-cache add --update python3
+  - pip3 install --upgrade pip
+  - pip3 install invoke
+  - inv build-aws --validate --distro=ubuntu --distro-version=1910
+  depends_on:
+  - clone
+
 - name: Windows 2016
   image: hashicorp/packer
   commands:
@@ -981,6 +991,67 @@ steps:
   - pip3 install --upgrade pip
   - pip3 install invoke
   - inv build-aws --distro=ubuntu --distro-version=1804
+  environment:
+    AWS_ACCESS_KEY_ID:
+      from_secret: username
+    AWS_DEFAULT_REGION: us-west-2
+    AWS_SECRET_ACCESS_KEY:
+      from_secret: password
+  depends_on:
+  - throttle-build
+
+- name: delete-old-amis
+  image: alpine
+  commands:
+  - apk --no-cache add --update python3 jq
+  - pip3 install --upgrade pip
+  - pip3 install -r requirements/py3.6/base.txt
+  - cat manifest.json | jq
+  - export name_filter=$(cat manifest.json | jq -r ".builds[].custom_data.ami_name")
+  - "echo \"Name Filter: $name_filter\""
+  - inv cleanup-aws --region=$AWS_DEFAULT_REGION --name-filter=$name_filter --assume-yes --num-to-keep=1
+  environment:
+    AWS_ACCESS_KEY_ID:
+      from_secret: username
+    AWS_DEFAULT_REGION: us-west-2
+    AWS_SECRET_ACCESS_KEY:
+      from_secret: password
+  depends_on:
+  - base-image
+
+node:
+  project: open
+
+trigger:
+  event:
+  - tag
+  ref:
+  - refs/tags/aws-base-v1.*
+
+depends_on:
+- Lint
+
+---
+kind: pipeline
+name: Ubuntu 1910
+
+platform:
+  os: linux
+  arch: amd64
+
+steps:
+- name: throttle-build
+  image: alpine
+  commands:
+  - sh -c 'echo Sleeping 105 seconds; sleep 105'
+
+- name: base-image
+  image: hashicorp/packer
+  commands:
+  - apk --no-cache add make curl grep gawk sed python3
+  - pip3 install --upgrade pip
+  - pip3 install invoke
+  - inv build-aws --distro=ubuntu --distro-version=1910
   environment:
     AWS_ACCESS_KEY_ID:
       from_secret: username
@@ -1999,6 +2070,67 @@ depends_on:
 
 ---
 kind: pipeline
+name: Ubuntu 1910 (Staging)
+
+platform:
+  os: linux
+  arch: amd64
+
+steps:
+- name: throttle-build
+  image: alpine
+  commands:
+  - sh -c 'echo Sleeping 105 seconds; sleep 105'
+
+- name: base-image
+  image: hashicorp/packer
+  commands:
+  - apk --no-cache add make curl grep gawk sed python3
+  - pip3 install --upgrade pip
+  - pip3 install invoke
+  - inv build-aws --staging --distro=ubuntu --distro-version=1910
+  environment:
+    AWS_ACCESS_KEY_ID:
+      from_secret: username
+    AWS_DEFAULT_REGION: us-west-2
+    AWS_SECRET_ACCESS_KEY:
+      from_secret: password
+  depends_on:
+  - throttle-build
+
+- name: delete-old-amis
+  image: alpine
+  commands:
+  - apk --no-cache add --update python3 jq
+  - pip3 install --upgrade pip
+  - pip3 install -r requirements/py3.6/base.txt
+  - cat manifest.json | jq
+  - export name_filter=$(cat manifest.json | jq -r ".builds[].custom_data.ami_name")
+  - "echo \"Name Filter: $name_filter\""
+  - inv cleanup-aws --region=$AWS_DEFAULT_REGION --name-filter=$name_filter --assume-yes --num-to-keep=1
+  environment:
+    AWS_ACCESS_KEY_ID:
+      from_secret: username
+    AWS_DEFAULT_REGION: us-west-2
+    AWS_SECRET_ACCESS_KEY:
+      from_secret: password
+  depends_on:
+  - base-image
+
+node:
+  project: open
+
+trigger:
+  branch:
+  - master
+  event:
+  - push
+
+depends_on:
+- Lint
+
+---
+kind: pipeline
 name: Windows 2016 (Staging)
 
 platform:
@@ -2121,6 +2253,6 @@ depends_on:
 
 ---
 kind: signature
-hmac: ec475b887bec8c5cfc738e2563f32f99cf252e02d21fd2132eaa361eb35c2250
+hmac: 06e332970a5a7520dd31ddfc9495550fb94411c46dac32c3cc845175e59f3013
 
 ...
